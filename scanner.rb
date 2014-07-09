@@ -22,13 +22,12 @@ class Scanner
 
   def scan_items
     sorted_items.each do |item, total|
-      if PRICES[item][:discount_number] && total >= PRICES[item][:discount_number] 
-        sum_of_item = ((total / PRICES[item][:discount_number]) * PRICES[item][:discount_price])
-                      + ((total % PRICES[item][:discount_number]) *PRICES[item][:original_price])
+      if PRICES[item][:discount_number] && total >= PRICES[item][:discount_number]
+        total_item_price = apply_discount(item, total) 
       else
-        sum_of_item = total * (PRICES[item][:original_price])                
+        total_item_price = apply_full_price(item, total)           
       end
-      sorted_items[item] = sum_of_item
+      sorted_items[item] = total_item_price
     end
   end
 
@@ -39,12 +38,21 @@ class Scanner
     end 
     total
   end
+
+  def check_out
+    sort_check_out_items
+    scan_items
+    add_total_price
+  end
+
+  private
+
+  def apply_discount(item, total)
+    ((total / PRICES[item][:discount_number]) * PRICES[item][:discount_price]) + ((total % PRICES[item][:discount_number]) *PRICES[item][:original_price])
+  end
+
+  def apply_full_price(item, total)
+    total * (PRICES[item][:original_price]) 
+  end
+
 end
-
-# def set_pricing product, price
-#   product = price
-# end
-
-# def return_price product
-#   product => price
-# end
